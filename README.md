@@ -13,7 +13,7 @@ ChatCMS is a lightweight content management system (CMS) built with Python.that 
 1. Clone the repository and enter the project directory:
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/tanzhimei393/chatcms.git
 cd ChatCMS
 ```
 
@@ -124,5 +124,6 @@ If you want, I can add a ready-to-use `Dockerfile`, `docker-compose.yml`, a `Pro
 ## Support / Donate
 
 If you'd like to support development, scan the QR code below:
+
 
 [![Donate QR](static/theme/images/donate_qr.png)](static/theme/images/donate_qr.png)
