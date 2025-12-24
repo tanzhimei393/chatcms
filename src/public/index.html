@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% block content %}
+  <!-- 首页VPN介绍区域 --> 
+  <section class="pt-16 md:pt-20 h-screen flex items-center relative overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5"> 
+   <div class="absolute inset-0 z-0"> 
+    <div class="absolute top-0 left-0 w-full h-full bg-cover bg-center opacity-10"></div> 
+   </div> 
+   <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10"> 
+    <div class="grid md:grid-cols-2 gap-12 items-center"> 
+     <div class="space-y-6"> 
+      <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight text-dark"> 突破网络限制 <br /> <span class="text-primary"> 畅享全球互联网 </span> </h1> 
+      <p class="text-lg text-gray-600 max-w-lg"> 好速互联VPN提供高速、安全、稳定的网络连接服务，让您轻松访问全球内容，保护您的在线隐私与安全。 </p> 
+      <p class="text-lg text-gray-600 max-w-lg"> 支持Windows、Mac、iOS、Android等多个平台 </p> 
+      <div class="flex flex-wrap gap-4 pt-4"> 
+       <a class="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-lg font-semibold text-lg shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30 flex items-center" target="_blank" href="{{ site_distribute }}"> <i class="fas fa-rocket mr-2"> </i> 立即连接 </a> 
+       <a class="bg-white hover:bg-gray-50 text-primary border border-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all flex items-center" target="_blank" href="{{ site_distribute }}"> <i class="fas fa-info-circle mr-2"> </i> 了解更多 </a> 
+      </div> 
+      <div class="flex items-center space-x-6 pt-6"> 
+       <div class="flex -space-x-2">
+        {% for author in authors %}
+        <img alt="{{ author.name }}" class="w-10 h-10 rounded-full border-2 border-white" src="/{{ author.avatar_url }}" /> 
+        {% endfor %}
+        <div class="w-10 h-10 rounded-full bg-primary/10 border-2 border-white flex items-center justify-center text-primary text-xs font-bold">
+          10k+ 
+        </div> 
+       </div> 
+       <div class="text-sm text-gray-600"> 
+        <span class="font-bold text-dark"> 10,000+ </span> 活跃用户的信赖之选 
+       </div> 
+      </div> 
+     </div> 
+     <div class="hidden md:block relative"> 
+      <div class="relative z-10 rounded-2xl overflow-hidden shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500"> 
+       <img alt="VPN" class="w-full h-auto object-cover" src="/static/theme/images/banner_1.jpg" /> 
+      </div> 
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-primary/30 to-secondary/30 rounded-full filter blur-3xl opacity-50 -z-10"></div> 
+     </div> 
+    </div> 
+    <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce"> 
+     <a class="text-gray-400 hover:text-primary transition-colors" href="#search-section"> </a> 
+    </div> 
+   </div> 
+  </section> 
+  <!-- 文章搜索区域 --> 
+  <section class="py-16 bg-white" id="search-section"> 
+   <div class="container mx-auto px-4 sm:px-6 lg:px-8"> 
+    <div class="max-w-3xl mx-auto"> 
+     <div class="text-center mb-10"> 
+      <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark mb-4"> 探索最新资讯 </h2> 
+      <p class="text-gray-600"> 搜索人工智能/跨境电商/开源社区/科学上网相关的最新文章和教程 </p> 
+     </div> 
+     <div class="relative"> 
+      <input class="w-full px-6 py-4 rounded-xl border border-gray-200 shadow-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-lg" id="article-search" placeholder="输入关键词搜索文章..." type="text" /> 
+      <button class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors" id="search-button"> <i class="fas fa-search text-xl"> </i> </button> 
+     </div> 
+     {% if site_search %}
+     <div class="flex flex-wrap justify-center gap-3 mt-6 items-center"> 
+      <span class="text-gray-500"> 热门搜索: </span> 
+      {% for keyword in site_search.split(',') %}
+      <a class="text-primary hover:text-primary/80 text-sm font-medium" href="/search?keyword={{ keyword.strip() }}"> # {{ keyword.strip() }}</a> 
+      {% endfor %}
+     </div> 
+     {% endif %}
+    </div> 
+   </div> 
+  </section> 
+  <!-- 文章列表区域 --> 
+  <section class="py-16 bg-gray-50"> 
+   <div class="container mx-auto px-4 sm:px-6 lg:px-8"> 
+    <div class="grid md:grid-cols-2 gap-10"> 
+     <!-- 文章列表 -->
+     {% for category in categories %}
+     <div> 
+      <div class="flex items-center justify-between mb-8"> 
+       <h2 class="text-2xl font-bold text-dark flex items-center"> <i class="{{ category.icon }} text-{{ category.color }} mr-3 text-2xl"></i> {{ category.name }} </h2> 
+       <a class="text-primary hover:text-primary/80 font-medium flex items-center" href="/categories/{{ category.id }}"> 查看全部 <i class="fas fa-arrow-right ml-2"> </i> </a> 
+      </div> 
+      <div class="space-y-6"> 
+        {% for article in category.articles %}
+        <article class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow card-hover">
+            <div class="md:flex">
+                <div class="md:w-1/3">
+                    <img
+                        src="/{{ article.thumbnail_url }}"
+                        alt="{{ article.title }}"
+                        class="w-full h-48 md:h-full object-cover"
+                    >
+                </div>
+                <div class="p-6 md:w-2/3 flex flex-col">
+                    <div class="flex items-center text-sm text-gray-500 mb-2">
+                        <span class="bg-{{ category.color }}/10 text-{{ category.color }} px-2 py-1 rounded-full text-xs font-medium">{{ category.name }}</span>
+                        <span class="mx-2">•</span>
+                        <span>{{ article.published_at.strftime('%Y-%m-%d') }}</span>
+                        <span class="mx-2">•</span>
+                        <span><i class="far fa-clock mr-1"></i> {{ article.read_time }}</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 hover:text-primary transition-colors">
+                        <a href="/articles/{{ article.id }}" class="article-link">{{ article.title }}</a>
+                    </h3>
+                    <p class="text-gray-600 mb-4 flex-grow">{{ article.subtitle }}</p>
+                    <div class="flex items-center justify-between mt-auto">
+                        <div class='flex items-center'>
+                            <img src="/{{ article.author.avatar_url }}" alt="{{ article.author.name }}" class='w-10 h-10 rounded-full mr-3'/>
+                            <div >
+                                <div class='text-sm font-medium text-gray-800'>{{ article.author.name }}</div>
+                                <div class='text-xs text-gray-500'>{{ article.author.profession }}</div>
+                            </div>
+                        </div>
+                        <a href="/articles/{{ article.id }}" class="text-primary hover:text-primary/80 font-medium text-sm article-link">
+                            阅读更多 <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+      </div> 
+     </div>
+     {% endfor %}
+    </div> 
+   </div> 
+  </section>
+  {% if hot_tags %}
+  <!-- 热门推荐 -->
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark mb-4">
+            热门标签
+            </h2>
+            <p class="text-gray-600 max-w-2xl mx-auto">
+            探索我们平台上最受欢迎的主题和关键词，发现更多相关内容
+            </p>
+        </div>
+        <div class="flex flex-wrap justify-center gap-4 mt-8">
+            {% for hot_tag in hot_tags %}
+            {% if loop.index == 1 %}
+            <a class="bg-primary/10 hover:bg-primary/20 text-primary px-5 py-3 rounded-full font-medium transition-colors"href="/tags/{{ hot_tag }}">
+            <i class="fas fa-tag mr-2"> </i>
+            {{ hot_tag }}
+            </a>
+            {% endif %}
+            {% if loop.index == 2 %}
+            <a class="bg-secondary/10 hover:bg-secondary/20 text-secondary px-5 py-3 rounded-full font-medium transition-colors" href="/tags/{{ hot_tag }}">
+            <i class="fas fa-tag mr-2"> </i>
+            {{ hot_tag }}
+            </a>
+            {% endif %}
+            {% if loop.index == 3 %}
+            <a class="bg-accent/10 hover:bg-accent/20 text-accent px-5 py-3 rounded-full font-medium transition-colors" href="/tags/{{ hot_tag }}">
+            <i class="fas fa-tag mr-2"> </i>
+            {{ hot_tag }}
+            </a>
+            {% endif %}
+            {% if loop.index > 3 %}
+            <a class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-3 rounded-full font-medium transition-colors" href="/tags/{{ hot_tag }}">
+            <i class="fas fa-tag mr-2"> </i>
+            {{ hot_tag }}
+            </a>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+  </section>
+  {% endif %}
+  {% if authors %}
+  <!-- 推荐作者 -->
+  <section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark mb-4">推荐作者</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto">关注我们平台上的优秀创作者，获取更多专业知识和见解</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {% for author in authors %}
+            <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow card-hover">
+                <div class="p-6 flex flex-col items-center text-center">
+                    <img src="/{{ author.avatar_url }}" alt="{{ author.name }}" class="w-24 h-24 rounded-full object-cover border-4 border-primary/10 mb-4">
+                    <h3 class="text-xl font-bold mb-1">{{ author.name }}</h3>
+                    <p class="text-primary font-medium mb-3">{{ author.profession }}</p>
+                    <p class="text-gray-600 text-sm mb-4">{{ author.description }}</p>
+                    <div class="flex justify-center space-x-4 w-full text-gray-500 text-sm">
+                        <span><i class="far fa-file-alt mr-1"></i> {{ author.articles|length }} 文章</span>
+                        <span><i class="far fa-user mr-1"></i> {{ (author.total_pageviews / 1000) | round(1) }}k 阅读</span>
+                    </div>
+                    <a class="mt-4 bg-primary/10 hover:bg-primary/20 text-primary px-5 py-2 rounded-full font-medium transition-colors w-full" href="/authors/{{ author.id }}">查看作者</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+  </section>
+  {% endif %}
+  <!-- 页脚 --> 
+  {% include "footer.html" %}
+  <!-- 返回顶部按钮 -->
+  <button
+    class="fixed bottom-6 right-6 bg-primary text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:bg-primary/90"
+    id="back-to-top"
+  >
+   <i class="fas fa-chevron-up"> </i>
+  </button>
+  <script src="/static/theme/js/base.js"></script>
+  <script src="/static/theme/js/index.js"></script>
+{% endblock %}

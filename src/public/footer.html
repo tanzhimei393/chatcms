@@ -1,0 +1,62 @@
+  <footer class="bg-dark text-white pt-16 pb-8"> 
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8"> 
+      <div class="grid md:grid-cols-4 gap-10"> 
+        <div> 
+          <div class="flex items-center mb-6"> 
+            <i class="fas fa-shield-alt text-primary text-2xl mr-2"> </i> 
+            <span class="text-xl font-bold text-white"> {{ site_name }} </span> 
+          </div> 
+          <p class="text-gray-400 mb-6"> 提供高速、安全、稳定的VPN服务，让您畅享全球互联网，保护您的在线隐私。 </p> 
+          <div class="flex space-x-4"> 
+            <a class="text-gray-400 hover:text-primary transition-colors" href="/"> <i class="fab fa-facebook-f text-xl"> </i> </a> 
+            <a class="text-gray-400 hover:text-primary transition-colors" href="/"> <i class="fab fa-twitter text-xl"> </i> </a> 
+            <a class="text-gray-400 hover:text-primary transition-colors" href="/"> <i class="fab fa-instagram text-xl"> </i> </a> 
+            <a class="text-gray-400 hover:text-primary transition-colors" href="/"> <i class="fab fa-telegram-plane text-xl"> </i> </a> 
+          </div> 
+        </div> 
+        <div> 
+        <h4 class="text-lg font-semibold mb-6">快速链接</h4> 
+        <ul class="space-y-3"> 
+          <li> <a class="text-gray-400 hover:text-primary transition-colors" href="/"> 首页 </a> </li> 
+          {% for category in categories %}
+          <li> <a class="text-gray-400 hover:text-primary transition-colors" href="/categories/{{ category.id }}"> {{ category.name }} </a> </li> 
+          {% endfor %}
+          <li> <a class="text-gray-400 hover:text-primary transition-colors" href="/authors"> 社区作者 </a> </li> 
+        </ul> 
+        </div> 
+        <div> 
+        <h4 class="text-lg font-semibold mb-6">服务</h4> 
+        <ul class="space-y-3"> 
+          <li> <a class="text-gray-400 hover:text-primary transition-colors" href="/"> 个人VPN </a> </li> 
+          <li> <a class="text-gray-400 hover:text-primary transition-colors" href="/"> 企业VPN </a> </li> 
+          <li> <a class="text-gray-400 hover:text-primary transition-colors" href="/"> 解锁GitHub </a> </li> 
+          <li> <a class="text-gray-400 hover:text-primary transition-colors" href="/"> 解锁ChatGPT </a> </li>
+          <li> <a class="text-gray-400 hover:text-primary transition-colors" href="/"> 解锁Midjourney </a> </li>
+          <li> <a class="text-gray-400 hover:text-primary transition-colors" href="/"> 解锁流媒体 </a> </li> 
+        </ul> 
+        </div> 
+        <div> 
+          <h4 class="text-lg font-semibold mb-6">订阅专栏</h4> 
+          <p class="text-gray-400 mb-4"> 获取最新的免费VPN及资讯 </p> 
+          <form id="footer-subscribe-form">
+            <div class="flex"> 
+                <input
+                  class="px-4 py-2 rounded-l-lg w-full bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-1 focus:ring-primary"
+                  placeholder="您的邮箱地址"
+                  type="email"
+                  name="email"
+                  id="footer-subscribe-email"
+                  required
+                  />
+                <input type="hidden" name="fingerprint" id="footer-browser-fingerprint">
+                <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-r-lg transition-colors" type="submit"> <i class="fas fa-paper-plane"> </i> </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 text-sm">
+        <p>&copy; 2025 {{ site_name }}. 所有权利.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="/static/theme/js/footer.js"></script>

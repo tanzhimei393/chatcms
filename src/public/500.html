@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+  <!-- 500错误页面内容 -->
+  <div class="flex-grow pt-24 md:pt-32 pb-16">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <!-- 错误信息 -->
+            <h1 class="text-[clamp(2.5rem,8vw,5rem)] font-bold text-dark mb-6">
+            500
+            </h1>
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark mb-4">
+            服务器内部错误
+            </h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+            {{ exception }}
+            </p>
+            <!-- 操作按钮 -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+            <a href="/" class="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-lg font-semibold text-lg shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30 flex items-center justify-center">
+                <i class="fas fa-home mr-2"> </i>
+                返回首页
+            </a>
+            <a href="/search" class="bg-white hover:bg-gray-50 text-primary border border-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all flex items-center justify-center">
+                <i class="fas fa-search mr-2"> </i>
+                搜索内容
+            </a>
+            </div>
+            <!-- 快速链接 -->
+            {% if hot_articles %}
+            <div class="sticky top-24 bg-white rounded-xl shadow-sm p-6 border border-gray-100 max-w-2xl mx-auto">
+            <h3 class="text-xl font-bold text-dark mb-6 flex items-center">
+                <i class="fas fa-fire text-red-500 mr-2"> </i>
+                热门推荐
+            </h3>
+            <div class="space-y-4">
+                {% for hot_article in hot_articles %}
+                <a class="flex items-start space-x-3 group" href="/articles/{{ hot_article.id }}">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-medium">
+                    {{ loop.index }}
+                </span>
+                <span class="text-gray-700 group-hover:text-primary transition-colors">
+                    {{ hot_article.title }}
+                </span>
+                </a>
+                {% endfor %}
+            </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+  </div>
+  <!-- 页脚 --> 
+  {% include "footer.html" %}
+  <!-- 返回顶部按钮 -->
+  <button
+    class="fixed bottom-6 right-6 bg-primary text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:bg-primary/90"
+    id="back-to-top"
+  >
+   <i class="fas fa-chevron-up"> </i>
+  </button>
+  <script src="/static/theme/js/base.js"></script>
+  <script src="/static/theme/js/500.js"></script>
+{% endblock %}

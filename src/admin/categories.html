@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block content %}
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">栏目管理</h2>
+                <button onclick="document.getElementById('createModal').classList.remove('hidden')" 
+                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                    新建栏目
+                </button>
+            </div>
+            <!-- 创建模态框 -->
+            <div id="createModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div class="bg-white p-6 rounded-lg w-96">
+                    <h3 class="text-xl font-bold mb-4">新建栏目</h3>
+                    <form method="post" action="/kofkyo/categories">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">名称</label>
+                            <input type="text" name="name" required 
+                                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">图标</label>
+                            <input type="text" name="icon" required 
+                                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">颜色</label>
+                            <input type="text" name="color" required 
+                                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">发布数量</label>
+                            <input type="number" name="publish_count" value="10" 
+                                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" onclick="document.getElementById('createModal').classList.add('hidden')" 
+                                    class="px-4 py-2 border rounded-md">取消</button>
+                            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">创建</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- 编辑模态框 -->
+            <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div class="bg-white p-6 rounded-lg w-96">
+                    <h3 class="text-xl font-bold mb-4">编辑栏目</h3>
+                    <form method="post" action="/kofkyo/categories/edit" id="editForm">
+                        <input type="hidden" name="category_id" id="editCategoryId">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">名称</label>
+                            <input type="text" name="name" id="editName" required 
+                                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">图标</label>
+                            <input type="text" name="icon" id="editIcon" required 
+                                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">颜色</label>
+                            <input type="text" name="color" id="editColor" required 
+                                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">发布数量</label>
+                            <input type="number" name="publish_count" id="editPublishCount" 
+                                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" onclick="document.getElementById('editModal').classList.add('hidden')" 
+                                    class="px-4 py-2 border rounded-md">取消</button>
+                            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">保存</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <table class="min-w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left">ID</th>
+                            <th class="px-6 py-3 text-left">名称</th>
+                            <th class="px-6 py-3 text-left">图标</th>
+                            <th class="px-6 py-3 text-left">颜色</th>
+                            <th class="px-6 py-3 text-left">发布数量</th>
+                            <th class="px-6 py-3 text-left">今日文章</th>
+                            <th class="px-6 py-3 text-left">状态</th>
+                            <th class="px-6 py-3 text-left">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        {% for category in categories %}
+                        <tr>
+                            <td class="px-6 py-4">{{ category.id }}</td>
+                            <td class="px-6 py-4">{{ category.name }}</td>
+                            <td class="px-6 py-4">{{ category.icon }}</td>
+                            <td class="px-6 py-4">{{ category.color }}</td>
+                            <td class="px-6 py-4">{{ category.publish_count }}</td>
+                            <td class="px-6 py-4">{{ category.article_count }}</td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-1 rounded-full text-xs {% if category.is_active %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                    {{ "启用" if category.is_active else "禁用" }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 space-x-2">
+                                <button onclick="openEditModal('{{ category.id }}', '{{ category.name }}', '{{ category.icon }}', '{{ category.color }}', '{{ category.publish_count }}')" 
+                                        class="text-green-600 hover:text-green-800">编辑</button>
+                                <form method="post" action="/kofkyo/categories/{{ category.id }}/toggle" class="inline">
+                                    <button type="submit" class="text-blue-600 hover:text-blue-800">
+                                        {{ "禁用" if category.is_active else "启用" }}
+                                    </button>
+                                </form>
+                                <form method="post" action="/kofkyo/categories/{{ category.id }}/delete" class="inline" 
+                                    onsubmit="return confirm('确定要删除这个栏目吗？')">
+                                    <button type="submit" class="text-red-600 hover:text-red-800">删除</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <script>
+                function openEditModal(id, name, icon, color, publishCount) {
+                    document.getElementById('editCategoryId').value = id;
+                    document.getElementById('editName').value = name;
+                    document.getElementById('editIcon').value = icon;
+                    document.getElementById('editColor').value = color;
+                    document.getElementById('editPublishCount').value = publishCount;
+                    document.getElementById('editModal').classList.remove('hidden');
+                }
+            </script>
+{% endblock %}

@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% block content %}
+  <!-- 主要内容区 -->
+  <main class="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
+    <div class="flex flex-col lg:flex-row gap-8">
+    <!-- 左侧边栏：相关文章 -->
+    <aside class="lg:w-1/4 order-3 lg:order-1">
+        <div class="bg-white rounded-lg shadow-sm p-6 sticky top-24">
+        <h3 class="text-lg font-bold mb-4 flex items-center">相关文章</h3>
+        <div class="space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
+            <!-- 相关文章列表 -->
+            {% for related_article in related_articles %}
+            <div class="related-article group">
+                <a class="flex gap-3" href="/articles/{{ related_article.id }}">
+                    <img
+                    alt="{{ related_article.title }}"
+                    class="w-20 h-20 object-cover rounded-md flex-shrink-0"
+                    src="/{{ related_article.thumbnail_url }}"
+                    />
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-800 group-hover:text-primary transition-colors duration-200 line-clamp-2">
+                            {{ related_article.title }}
+                        </h4>
+                        <p class="text-xs text-gray-500 mt-1">
+                            {{ related_article.published_at.strftime('%Y-%m-%d') }} · {{ related_article.read_time }}
+                        </p>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        </div>
+    </aside>
+    <!-- 中间内容区：文章详情 -->
+    <article class="lg:w-2/3 order-1 lg:order-2">
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <!-- 文章头部 -->
+        <div class="p-4 sm:p-5">
+            <div class="flex flex-wrap gap-2 mb-4">
+                <a class="inline-block px-3 py-1 bg-{{ article.category.color }}/10 text-{{ article.category.color }} text-xs font-medium rounded-full" href="/categories/{{ article.category.id }}">
+                  {{ article.category.name }}
+                </a>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+                {{ article.title }}
+            </h1>
+            <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+                <div class="flex items-center">
+                    <a href="/authors/{{ article.author.id }}">
+                        <img src="/{{ article.author.avatar_url }}" alt="{{ article.author.name }}" class="w-10 h-10 rounded-full object-cover"/>
+                    </a>
+                    <div class="ml-3">
+                        <div class="text-sm font-medium text-gray-900">{{ article.author.name }}</div>
+                        <div class="text-xs text-gray-500">{{ article.author.profession }}</div>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm text-gray-500 space-x-6">
+                    <span class="flex items-center">
+                    <i class="fas fa-calendar-alt mr-1.5"> </i>
+                    {{ article.published_at.strftime('%Y-%m-%d') }}
+                    </span>
+                    <span class="flex items-center">
+                    <i class="fas fa-clock mr-1.5"> </i>
+                    {{ article.read_time }}
+                    </span>
+                    <span class="flex items-center">
+                    <i class="fas fa-eye mr-1.5"> </i>
+                    {{ (article.pageviews / 1000) | round(1) }}k
+                    </span>
+                </div>
+            </div>
+            <!-- 文章封面图 -->
+            <div class="relative rounded-xl overflow-hidden mb-8">
+                <img class="w-full h-auto object-cover" src="/{{ article.thumbnail_url }}" alt="{{ article.title }}"/>
+                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 text-white text-sm">
+                    {{ article.subtitle }}
+                </div>
+            </div>
+        </div>
+        <!-- 文章内容 -->
+        <div id="article" class="px-6 sm:px-8 pb-8">
+            <div class="render-content">
+                <div class="ql-snow">{{ article.content|safe }}</div>
+            </div>
+        </div>
+        <!-- 文章底部 -->
+        <div class="border-t border-gray-200 px-6 sm:px-8 py-6">
+            <div class="max-w-3xl mx-auto">
+            <!-- 文章标签 -->
+            <div class="mb-6">
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">
+                文章标签
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    {% for article_tag in article_tags %}
+                    <a class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full hover:bg-blue-200 transition-colors duration-200"
+                        href="/tags/{{ article_tag }}"
+                    >
+                        {{ article_tag }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- 收藏和分享 -->
+            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                <!-- 收藏按钮 -->
+                <button class="flex items-center text-gray-600 hover:text-primary transition-colors duration-200" id="favorite-btn">
+                    <i class="far fa-heart mr-2"> </i>
+                    <span> 收藏文章 </span>
+                </button>
+                <!-- 分享按钮 -->
+                <div class="flex items-center space-x-1">
+                    <button
+                        class="text-gray-500 hover:text-blue-400 transition-colors duration-200"
+                    >
+                        <i class="fas fa-link mr-2"> </i>
+                        <span> 复制链接 </span>
+                    </button>
+                </div>
+            </div>
+            </div>
+        </div>
+        <!-- 上一篇/下一篇导航 -->
+        <div class="border-t border-gray-200 px-6 sm:px-8 py-6">
+            <div class="max-w-3xl mx-auto">
+            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                <!-- 上一篇 -->
+                <a class="flex-1 flex items-center p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-colors duration-200" href="/articles/{{ prev_article.id }}">
+                    <i class="fas fa-chevron-left text-gray-400 mr-3"> </i>
+                    <div class="flex-1 min-w-0">
+                        <span class="text-xs text-gray-500 block mb-1">上一篇</span>
+                        <h4 class="text-sm font-medium text-gray-800 hover:text-primary break-words line-clamp-2">
+                            {{ prev_article.title }}
+                        </h4>
+                    </div>
+                </a>
+
+                <!-- 下一篇 -->
+                <a class="flex-1 flex items-center p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-colors duration-200" href="/articles/{{ next_article.id }}">
+                    <div class="flex-1 min-w-0 text-right">
+                        <span class="text-xs text-gray-500 block mb-1">下一篇</span>
+                        <h4 class="text-sm font-medium text-gray-800 hover:text-primary break-words line-clamp-2">
+                            {{ next_article.title }}
+                        </h4>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400 ml-3"> </i>
+                </a>
+            </div>
+            </div>
+        </div>
+        </div>
+    </article>
+    <!-- 右侧边栏：标签云 -->
+    <aside class="lg:w-1/4 order-2 lg:order-3">
+        <div class="bg-white rounded-lg shadow-sm p-6 sticky top-24">
+        <!-- 订阅区域 -->
+        <div class="mb-6">
+            <h3 class="text-lg font-bold mb-4">订阅专栏</h3>
+            <p class="text-sm text-gray-600 mb-4">
+            获取最新的免费VPN及资讯，直接发送到您的邮箱
+            </p>
+            <form class="space-y-3" id="subscribe-form">
+                <input
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                    placeholder="您的邮箱地址"
+                    type="email"
+                    name="email"
+                    id="subscribe-email"
+                    required
+                />
+                <input type="hidden" name="fingerprint" id="browser-fingerprint">
+                <button
+                    class="w-full py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors duration-200"
+                    type="submit"
+                >
+                    立即订阅
+                </button>
+            </form>
+            <p class="text-xs text-gray-500 mt-3 text-center">
+            我们尊重您的隐私，不向第三方分享您的信息
+            </p>
+        </div>
+        <div class="border-t border-gray-200 my-6"></div>
+        <h3 class="text-lg font-bold mb-4 flex items-center">
+            热门标签
+        </h3>
+        <div class="flex flex-wrap gap-2 mb-8">
+            {% for hot_tag in hot_tags %}
+            <a class="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 transition-colors duration-200" href="/tags/{{ hot_tag }}">
+            {{ hot_tag }}
+            </a>
+            {% endfor %}
+        </div>
+        <a
+            class="text-primary text-sm flex items-center justify-center mt-6"
+            style="opacity: 1; color: rgb(22, 93, 255); font-family: Inter, system-ui, sans-serif; font-size: 14px; font-weight: 400; font-style: normal; line-height: 20px; text-align: start; text-indent: 0px;"
+            href="/tags/所有标签"
+        >
+            查看所有标签
+            <i class="fas fa-chevron-right ml-1 text-xs"> </i>
+        </a>
+        <!-- 热门推荐 -->
+        <div class="mt-8 pt-6 border-t border-gray-200">
+            <h3 class="text-lg font-bold mb-4">热门推荐</h3>
+            <div class="space-y-4">
+                {% for hot_article in hot_articles %}
+                <a class="block group" href="/articles/{{ hot_article.id }}">
+                    <div class="flex gap-3">
+                    <img
+                        alt="{{ hot_article.title }}"
+                        class="w-16 h-16 object-cover rounded-md flex-shrink-0"
+                        src="/{{ hot_article.thumbnail_url }}"
+                    />
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-800 group-hover:text-primary transition-colors duration-200 line-clamp-2">
+                        {{ hot_article.title }}
+                        </h4>
+                        <p class="text-xs text-gray-500 mt-1">{{ (hot_article.pageviews / 1000) | round(1) }}k阅读 · {{ hot_article.read_time }}</p>
+                    </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        </div>
+    </aside>
+    </div>
+  </main>
+  <!-- 页脚 --> 
+  {% include "footer.html" %}
+  <!-- 返回顶部按钮 -->
+  <button
+    class="fixed bottom-6 right-6 bg-primary text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:bg-primary/90"
+    id="back-to-top"
+  >
+    <i class="fas fa-chevron-up"> </i>
+  </button>
+  <script src="/static/theme/js/base.js"></script>
+  <script src="/static/theme/js/article_detail.js"></script>
+{% endblock %}

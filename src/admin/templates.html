@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+{% block content %}
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">模板管理</h2>
+                <button onclick="openCreateModal()" 
+                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                    新建模板
+                </button>
+            </div>
+            <!-- 创建模态框 -->
+            <div id="createModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white p-6 rounded-lg w-full max-w-7xl h-[99vh] overflow-y-auto">
+                    <h3 class="text-xl font-bold mb-4">新建模板</h3>
+                    <form method="post" action="/kofkyo/templates" id="createForm">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-gray-700 mb-2">所属栏目</label>
+                                <select name="category_id" required class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    {% for category in categories %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 mb-2">缩略图</label>
+                                <input type="text" name="thumbnail_url" required class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">标题</label>
+                            <input type="text" name="title" required class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">副标题</label>
+                            <input type="text" name="subtitle" required class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">正文</label>
+                            <div id="createEditor" style="height: 200px;"></div>
+                            <textarea id="createContent" name="content" class="hidden"></textarea>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">标签</label>
+                            <input type="text" name="tags" required class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" onclick="closeCreateModal()" class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">取消</button>
+                            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">创建</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- 编辑模态框 -->
+            <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white p-6 rounded-lg w-full max-w-7xl h-[99vh] overflow-y-auto">
+                    <h3 class="text-xl font-bold mb-4">编辑模板</h3>
+                    <form id="editForm" method="post">
+                        <input type="hidden" id="edit_template_id" name="template_id">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-gray-700 mb-2">所属栏目</label>
+                                <select id="edit_category_id" name="category_id" required class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    {% for category in categories %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 mb-2">缩略图</label>
+                                <input type="text" id="edit_thumbnail_url" name="thumbnail_url" required class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">标题</label>
+                            <input type="text" id="edit_title" name="title" required class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">副标题</label>
+                            <input type="text" id="edit_subtitle" name="subtitle" required class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">正文</label>
+                            <div id="editEditor" style="height: 200px;"></div>
+                            <textarea id="editContent" name="content" class="hidden"></textarea>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-2">标签</label>
+                            <input type="text" id="edit_tags" name="tags" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" onclick="closeEditModal()" class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">取消</button>
+                            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">保存</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <table class="min-w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left">ID</th>
+                            <th class="px-6 py-3 text-left">标题</th>
+                            <th class="px-6 py-3 text-left">栏目</th>
+                            <th class="px-6 py-3 text-left">状态</th>
+                            <th class="px-6 py-3 text-left">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        {% for template in templates %}
+                        <tr>
+                            <td class="px-6 py-4">{{ template.id }}</td>
+                            <td class="px-6 py-4">{{ template.title }}</td>
+                            <td class="px-6 py-4">{{ template.category.name }}</td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-1 rounded-full text-xs {% if template.is_active %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                    {{ "启用" if template.is_active else "禁用" }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 space-x-2">
+                                <button onclick="openEditModal('{{ template.id }}', '{{ template.category_id }}', '{{ template.thumbnail_url }}', '{{ template.title }}', '{{ template.subtitle }}', `{{ template.content }}`, '{{ template.tags }}')" 
+                                        class="text-green-600 hover:text-green-800">编辑</button>
+                                <form method="post" action="/kofkyo/templates/{{ template.id }}/toggle" class="inline">
+                                    <button type="submit" class="text-blue-600 hover:text-blue-800">
+                                        {{ "禁用" if template.is_active else "启用" }}
+                                    </button>
+                                </form>
+                                <form method="post" action="/kofkyo/templates/{{ template.id }}/delete" class="inline" 
+                                    onsubmit="return confirm('确定要删除这个模板吗？')">
+                                    <button type="submit" class="text-red-600 hover:text-red-800">删除</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <script>
+                // 定义字体选项（显示名称和实际值）
+                var fontOptions = [
+                    { name: '宋体', value: 'simsun' },
+                    { name: '黑体', value: 'simhei' },
+                    { name: '微软雅黑', value: 'microsoft-yahei' },
+                    { name: '楷体', value: 'kaiti' },
+                    { name: '仿宋', value: 'fang-song' },
+                    { name: 'Arial', value: 'arial' },
+                    { name: 'Times New Roman', value: 'times-new-roman' }
+                ];
+
+                // 定义字号选项
+                var sizeOptions = ['12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px'];
+
+                // 注册字体格式
+                var Font = Quill.import('formats/font');
+                Font.whitelist = fontOptions.map(option => option.value);
+                Quill.register(Font, true);
+
+                // 注册字号格式
+                var Size = Quill.import('formats/size');
+                Size.whitelist = sizeOptions;
+                Quill.register(Size, true);
+
+                // 自定义字体选择器
+                var FontStyle = Quill.import('attributors/style/font');
+                FontStyle.whitelist = fontOptions.map(option => option.value);
+                Quill.register(FontStyle, true);
+
+                // 初始化Quill编辑器
+                var createEditor = new Quill('#createEditor', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: {
+                            container: [
+                                [{'font': fontOptions.map(option => option.value) }],
+                                [{'size': sizeOptions }],
+                                [{'header': [1, 2, 3, false] }],
+                                ['bold', 'italic', 'underline'],
+                                ['link', 'blockquote', 'image'],
+                                [{'list': 'ordered'}, {'list': 'bullet'}],
+                                [{'indent': '-1'}, {'indent': '+1'}],
+                                [{'color': []}, {'background': []}],
+                                ['clean']
+                            ],
+                            handlers: {
+                                'font': function(value) {
+                                    var selectedFont = fontOptions.find(option => option.value === value);
+                                    this.quill.format('font', selectedFont ? selectedFont.value : value);
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // 为创建编辑器添加图片处理器
+                createEditor.getModule('toolbar').addHandler('image', function() {
+                    var range = createEditor.getSelection();
+                    var value = prompt('请输入图片URL:');
+                    if(value) {
+                        createEditor.insertEmbed(range.index, 'image', value, Quill.sources.USER);
+                    }
+                });
+
+                var editEditor = new Quill('#editEditor', {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: {
+                            container: [
+                                [{'font': fontOptions.map(option => option.value) }],
+                                [{'size': sizeOptions }],
+                                [{'header': [1, 2, 3, false] }],
+                                ['bold', 'italic', 'underline'],
+                                ['link', 'blockquote', 'image'],
+                                [{'list': 'ordered'}, {'list': 'bullet'}],
+                                [{'indent': '-1'}, {'indent': '+1'}],
+                                [{'color': []}, {'background': []}],
+                                ['clean']
+                            ],
+                            handlers: {
+                                'font': function(value) {
+                                    var selectedFont = fontOptions.find(option => option.value === value);
+                                    this.quill.format('font', selectedFont ? selectedFont.value : value);
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // 为编辑编辑器添加图片处理器
+                editEditor.getModule('toolbar').addHandler('image', function() {
+                    var range = editEditor.getSelection();
+                    var value = prompt('请输入图片URL:');
+                    if(value) {
+                        editEditor.insertEmbed(range.index, 'image', value, Quill.sources.USER);
+                    }
+                });
+
+                // 确保DOM完全加载后再绑定事件
+                document.addEventListener('DOMContentLoaded', function() {
+                    // 创建表单提交处理
+                    var createForm = document.getElementById('createForm');
+                    if (createForm) {
+                        createForm.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            var content = createEditor.root.innerHTML;
+                            if (content.trim() === '<p><br></p>' || content.trim() === '') {
+                                alert('正文内容不能为空');
+                                return false;
+                            }
+                            document.getElementById('createContent').value = content;
+                            this.submit();
+                        });
+                    }
+
+                    // 编辑表单提交处理
+                    var editForm = document.getElementById('editForm');
+                    if (editForm) {
+                        editForm.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            var content = editEditor.root.innerHTML;
+                            if (content.trim() === '<p><br></p>' || content.trim() === '') {
+                                alert('正文内容不能为空');
+                                return false;
+                            }
+                            document.getElementById('editContent').value = content;
+                            this.action = '/kofkyo/templates/' + document.getElementById('edit_template_id').value + '/edit';
+                            this.submit();
+                        });
+                    }
+                });
+
+                function openCreateModal() {
+                    document.getElementById('createModal').classList.remove('hidden');
+                }
+
+                function closeCreateModal() {
+                    document.getElementById('createModal').classList.add('hidden');
+                }
+
+                function openEditModal(templateId, categoryId, thumbnailUrl, title, subtitle, content, tags) {
+                    document.getElementById('edit_template_id').value = templateId;
+                    document.getElementById('edit_category_id').value = categoryId;
+                    document.getElementById('edit_thumbnail_url').value = thumbnailUrl;
+                    document.getElementById('edit_title').value = title;
+                    document.getElementById('edit_subtitle').value = subtitle;
+                    
+                    // 设置富文本编辑器内容
+                    editEditor.root.innerHTML = content;
+                    
+                    document.getElementById('edit_tags').value = tags;
+                    document.getElementById('editModal').classList.remove('hidden');
+                }
+
+                function closeEditModal() {
+                    document.getElementById('editModal').classList.add('hidden');
+                }
+            </script>
+
+{% endblock %}

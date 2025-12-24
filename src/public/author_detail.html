@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block content %}
+  <!-- 作者详情页面 -->
+  <div class="flex-grow pt-24 md:pt-28 pb-16">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- 作者信息头部 -->
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-8 mb-8">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="mb-6 md:mb-0 md:mr-8">
+                    <div class="relative">
+                        <img src="/{{ author.avatar_url }}" alt="{{ author.name }}" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-white shadow-lg"/>
+                        <div class="absolute -bottom-2 -right-2 bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center shadow-md">
+                            <i class="fas fa-check"> </i>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center md:text-left">
+                    <h1 class="text-2xl md:text-3xl font-bold mb-2">{{ author.name }}</h1>
+                    <p class="text-lg text-primary font-medium mb-3">
+                        {{ author.profession }}
+                    </p>
+                    <p class="text-gray-600 max-w-2xl mb-6">
+                        {{ author.description }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!-- 作者详情内容 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- 左侧热门文章 -->
+            <div class="lg:col-span-3">
+                <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
+                    <h2 class="text-xl font-bold mb-6 flex items-center">
+                        <i class="fas fa-fire text-red-500 mr-2"> </i>热门文章
+                    </h2>
+                    <div class="space-y-6">
+                        {% for hot_article in hot_articles %}
+                        <div class="flex">
+                            <span class="text-2xl font-bold text-gray-200 mr-3">
+                                {{ loop.index }}
+                            </span>
+                            <div>
+                                <h3 class="font-medium hover:text-primary transition-colors mb-1">
+                                    <a href="/articles/{{ hot_article.id }}">
+                                        {{ hot_article.title }}
+                                    </a>
+                                </h3>
+                                <p class="text-sm text-gray-500">{{ (hot_article.pageviews / 1000) | round(1) }}k 阅读 · {{ hot_article.read_time }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <!-- 中部最新文章 -->
+            <div class="lg:col-span-6">
+                <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-clock text-primary mr-2"> </i>最新文章
+                        </h2>
+                        <span class="text-gray-500"> 共发表 {{ total_articles }} 篇文章 </span>
+                    </div>
+                    <div class="space-y-8">
+                        {% for article in articles %}
+                        <!-- 文章 -->
+                        <article class="border-b border-gray-100 pb-8 last:border-0 last:pb-0">
+                            <div class="md:flex gap-6">
+                                <div class="md:w-1/3 mb-4 md:mb-0">
+                                    <img src="/{{ article.thumbnail_url }}" alt="{{ article.title }}" class="w-full h-40 object-cover rounded-lg"/>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <div class="flex items-center text-sm text-gray-500 mb-2">
+                                        <span class="bg-{{ article.category.color }}/10 text-{{ article.category.color }} px-2 py-1 rounded-full text-xs font-medium">{{ article.category.name }}</span>
+                                        <span class="mx-2"> • </span>
+                                        <span> {{ article.published_at.strftime('%Y-%m-%d') }} </span>
+                                        <span class="mx-2"> • </span>
+                                        <span><i class="far fa-eye mr-1"> </i>{{ (article.pageviews / 1000) | round(1) }}k</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold mb-2 hover:text-primary transition-colors">
+                                        <a href="/articles/{{ article.id }}">{{ article.title }}</a>
+                                    </h3>
+                                    <p class="text-gray-600 mb-4">{{ article.subtitle }}</p>
+                                    <a href="/articles/{{ article.id }}" class="text-primary hover:text-primary/80 font-medium flex items-center justify-end">阅读更多
+                                        <i class="fas fa-arrow-right ml-1"> </i>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                        {% endfor %}
+                    </div>
+                    {% if total_pages > 0 %}
+                    <!-- 分页 -->
+                    <div class="mt-10 flex justify-center">
+                        <nav class="flex items-center space-x-1">
+                            {% if page > 1 %}
+                            <a href="/authors/{{ author.id }}?page={{ page - 1 }}&per_page={{ per_page }}" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50">
+                                <i class="fas fa-chevron-left text-sm"> </i>
+                            </a>
+                            {% endif %}
+                            {# 智能分页逻辑 #}
+                            {% set max_visible_pages = 5 %}
+                            {% set half_window = 2 %}
+                            {% set start_page = [1, page - half_window]|max %}
+                            {% set end_page = [total_pages, page + half_window]|min %}
+                            {# 调整起始页码以确保显示足够的页码 #}
+                            {% if end_page - start_page + 1 < max_visible_pages %}
+                                {% if start_page == 1 %}
+                                    {% set end_page = [total_pages, max_visible_pages]|min %}
+                                {% else %}
+                                    {% set start_page = [1, end_page - max_visible_pages + 1]|max %}
+                                {% endif %}
+                            {% endif %}
+                            {# 显示第一页和省略号 #}
+                            {% if start_page > 1 %}
+                            <a href="/authors/{{ author.id }}?page=1&per_page={{ per_page }}" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50">1</a>
+                                {% if start_page > 2 %}
+                            <span class="w-10 h-10 flex items-center justify-center text-gray-500">...</span>
+                                {% endif %}
+                            {% endif %}
+                            {# 显示当前页附近的页码 #}
+                            {% for p in range(start_page, end_page + 1) %}
+                                {% if p == page %}
+                            <span class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white">{{ p }}</span>
+                                {% else %}
+                            <a href="/authors/{{ author.id }}?page={{ p }}&per_page={{ per_page }}" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50">{{ p }}</a>
+                                {% endif %}
+                            {% endfor %}
+                            {# 显示最后一页和省略号 #}
+                            {% if end_page < total_pages %}
+                                {% if end_page < total_pages - 1 %}
+                            <span class="w-10 h-10 flex items-center justify-center text-gray-500">...</span>
+                                {% endif %}
+                            <a href="/authors/{{ author.id }}?page={{ total_pages }}&per_page={{ per_page }}" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50">{{ total_pages }}</a>
+                            {% endif %}
+                            {% if page < total_pages %}
+                            <a href="/authors/{{ author.id }}?page={{ page + 1 }}&per_page={{ per_page }}" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50">
+                                <i class="fas fa-chevron-right text-sm"> </i>
+                            </a>
+                            {% endif %}
+                        </nav>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- 右侧作者标签 -->
+            <div class="lg:col-span-3">
+                <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
+                    {% if author_tags %}
+                    <h2 class="text-xl font-bold mb-6 flex items-center">
+                        <i class="fas fa-tags text-primary mr-2"> </i>作者标签
+                    </h2>
+                    <div class="flex flex-wrap gap-2 mb-8">
+                        {% for author_tag in author_tags %}
+                        {% if loop.index == 1 %}
+                        <a href="/tags/{{ author_tag }}" class="bg-primary/10 text-primary px-3 py-2 rounded-lg text-sm font-medium hover:bg-primary/20 transition-colors">{{ author_tag }}</a>
+                        {% elif loop.index == 2 %}
+                        <a href="/tags/{{ author_tag }}" class="bg-secondary/10 text-secondary px-3 py-2 rounded-lg text-sm font-medium hover:bg-secondary/20 transition-colors">{{ author_tag }}</a>
+                        {% else %}
+                        <a href="/tags/{{ author_tag }}" class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">{{ author_tag }}</a>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div>
+                        <h3 class="text-xl font-bold mb-6 flex items-center">
+                            <i class="fas fa-calendar-alt text-primary mr-2"> </i>发布频率
+                        </h3>
+                        <div class="flex items-center justify-between text-sm mb-2">
+                            <span class="text-gray-600"> 总阅读量 </span>
+                            <span class="font-medium"> {{ (author.total_pageviews / 1000) | round(1) }} k </span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm mb-2">
+                            <span class="text-gray-600"> 每周平均 </span>
+                            <span class="font-medium"> {{ avg_week_published }} 篇 </span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm mb-2">
+                            <span class="text-gray-600"> 本月发布 </span>
+                            <span class="font-medium"> {{ curr_month_published }} 篇 </span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-600"> 活跃时间 </span>
+                            <span class="font-medium"> 周一至周五 </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <!-- 页脚 --> 
+  {% include "footer.html" %}
+  <!-- 返回顶部按钮 -->
+  <button
+    class="fixed bottom-6 right-6 bg-primary text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:bg-primary/90"
+    id="back-to-top"
+  >
+   <i class="fas fa-chevron-up"> </i>
+  </button>
+  <script src="/static/theme/js/base.js"></script>
+  <script src="/static/theme/js/author_detail.js"></script>
+{% endblock %}

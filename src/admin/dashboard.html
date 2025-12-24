@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-red-100 rounded-full">
+                            <i class="fas fa-list text-red-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-gray-600">栏目数量</h3>
+                            <p class="text-2xl font-bold">{{ categories|length }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-blue-100 rounded-full">
+                            <i class="fas fa-users text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-gray-600">作者数量</h3>
+                            <p class="text-2xl font-bold">{{ authors_count }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-green-100 rounded-full">
+                            <i class="fas fa-file-alt text-green-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-gray-600">模板数量</h3>
+                            <p class="text-2xl font-bold">{{ templates_count }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-purple-100 rounded-full">
+                            <i class="fas fa-newspaper text-purple-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-gray-600">文章数量</h3>
+                            <p class="text-2xl font-bold">{{ articles_count }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-yellow-100 rounded-full">
+                            <i class="fas fa-envelope text-yellow-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-gray-600">订阅数量</h3>
+                            <p class="text-2xl font-bold">{{ subscribes_count }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold mb-4">栏目列表</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full table-auto">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="px-6 py-3 text-left">名称</th>
+                                <th class="px-6 py-3 text-left">发布数量</th>
+                                <th class="px-6 py-3 text-left">今日文章</th>
+                                <th class="px-6 py-3 text-left">状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for category in categories %}
+                            <tr class="border-b">
+                                <td class="px-6 py-4">{{ category.name }}</td>
+                                <td class="px-6 py-4">{{ category.publish_count }}</td>
+                                <td class="px-6 py-4">{{ category.article_count }}</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 rounded-full text-xs {% if category.is_active %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                        {{ "启用" if category.is_active else "禁用" }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+{% endblock %}

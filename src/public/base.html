@@ -1,0 +1,140 @@
+<html lang="zh-CN">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>{{ site_title}}</title>
+  <meta name="description" content="{{ site_description}}" />
+  <link rel="canonical" href="{{ request.url }}" />
+  {% if page and page > 1 %}
+  <link rel="prev" href="{{ (request.url ~ '').replace('page=' ~ page, 'page=' ~ (page-1)) }}" />
+  {% endif %}
+  {% if page and page < total_pages %}
+  {% if 'page' in (request.url ~ '') %}
+  <link rel="next" href="{{ (request.url ~ '').replace('page=' ~ page, 'page=' ~ (page+1)) }}" />
+  {% else %}
+  {% if '?' in (request.url ~ '') %}
+  <link rel="next" href="{{ request.url ~ '&page=' ~ (page+1) }}" />
+  {% else %}
+  <link rel="next" href="{{ request.url ~ '?page=' ~ (page+1) }}" />
+  {% endif %}
+  {% endif %}
+  {% endif %}
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ site_title}}">
+  <meta property="og:description" content="{{ site_description}}">
+  <meta property="og:url" content="{{ request.url }}">
+  <meta property="og:site_name" content="{{ site_title}}">
+  <meta property="og:image" content="{{ request.base_url ~ article.thumbnail_url if article else request.base_url ~ 'static/theme/images/banner_1.jpg' }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ site_title}}">
+  <meta name="twitter:description" content="{{ site_description}}">
+  <meta name="twitter:image" content="{{ request.base_url ~ article.thumbnail_url if article else request.base_url ~ 'static/theme/images/banner_1.jpg' }}">
+  <meta name="twitter:label1" content="Time to read" />
+  <meta name="twitter:data1" content="Less than a minute" />
+  {% if json_ld %}
+  <script type="application/ld+json">{{ json_ld|safe }}</script>
+  {% endif %}
+  <link href="/static/theme/css/all.min.css" rel="stylesheet"/>
+  <link href="/static/theme/css/quill.snow.css" rel="stylesheet">
+  <link href="/static/theme/css/custom.css" rel="stylesheet">
+  <script src="/static/theme/js/tailwindcss.js"></script>
+  <script src="/static/theme/js/iife.min.js"></script>
+  <script src="/static/theme/js/clarity.js"></script>
+  <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    primary: '#0665D0',
+                    secondary: '#36CFC9',
+                    accent: '#722ED1',
+                    dark: '#1D2129',
+                    light: '#F2F3F5'
+                },
+                fontFamily: {
+                    inter: ['Inter', 'system-ui', 'sans-serif'],
+                },
+            }
+        }
+    };
+    const fpPromise = FingerprintJS.load()
+  </script>
+  <style type="text/tailwindcss">
+   @layer utilities {
+        .content-auto {
+            content-visibility: auto;
+        }
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .transition-custom {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover {
+            @apply hover:shadow-lg hover:-translate-y-1 transition-all duration-300;
+        }
+    }
+  </style>
+ </head>
+ <body class="font-inter bg-gray-50 text-dark">
+  <!-- 导航栏 -->
+  <header class="fixed w-full bg-white/90 backdrop-blur-sm z-50 transition-all duration-300 shadow-sm" id="navbar">
+   <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16 md:h-20">
+     <!-- Logo -->
+     <div class="flex items-center">
+      <a class="flex items-center" href="/">
+       <i class="fas fa-shield-alt text-primary text-4xl mr-3"></i>
+       <span class="text-2xl font-bold text-primary">{{ site_name }}</span>
+      </a>
+     </div>
+     <!-- 桌面导航 -->
+     <nav class="hidden md:flex space-x-8 items-center">
+      <a class="text-gray-700 hover:text-primary font-medium transition-colors" href="/">
+       首页
+      </a>
+      {% for category in categories %}
+      <a class="text-gray-700 hover:text-primary font-medium transition-colors" href="/categories/{{ category.id }}">
+       {{ category.name }}
+      </a>
+      {% endfor %}
+      <a class="text-gray-700 hover:text-primary font-medium transition-colors" href="/authors">
+       社区作者
+      </a>
+      <a class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-colors" target="_blank" href="{{ site_distribute }}">
+       免费VPN
+      </a>
+     </nav>
+     <!-- 移动端菜单按钮 -->
+     <div class="md:hidden">
+      <button class="text-gray-700 hover:text-primary focus:outline-none" id="menu-toggle">
+       <i class="fas fa-bars text-xl">
+       </i>
+      </button>
+     </div>
+    </div>
+   </div>
+   <!-- 移动端导航菜单 -->
+   <div class="hidden md:hidden bg-white shadow-lg absolute w-full" id="mobile-menu">
+    <div class="container mx-auto px-4 py-3 space-y-3">
+     <a class="block text-gray-700 hover:text-primary font-medium py-2 transition-colors" href="/">
+      首页
+     </a>
+     {% for category in categories %}
+     <a class="block text-gray-700 hover:text-primary font-medium py-2 transition-colors" href="/categories/{{ category.id }}">
+      {{ category.name }}
+     </a>
+     {% endfor %}
+     <a class="block text-gray-700 hover:text-primary font-medium py-2 transition-colors" href="/authors">
+      社区作者
+     </a>
+     <a class="block bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium text-center transition-colors" target="_blank" href="{{ site_distribute }}">
+      免费VPN
+     </a>
+    </div>
+   </div>
+  </header>
+  {% block content %}{% endblock %}
+ </body>
+</html>

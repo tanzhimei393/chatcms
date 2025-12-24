@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="flex-grow pt-24 md:pt-28 pb-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- 作者列表头部 -->
+            <div class="bg-white rounded-2xl shadow-md p-6 md:p-8 mb-8 transform transition-all duration-500 hover:shadow-lg">
+                <div class="max-w-7xl mx-auto">
+                    <!-- 标题和描述区域 -->
+                    <div class="mb-6 md:mb-8 flex flex-col items-center text-center">
+                        <div class="bg-primary/10 p-4 rounded-full mb-4">
+                            <i class="fas fa-user-circle text-primary text-6xl"> </i>
+                        </div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-dark mb-3">
+                            社区作者
+                        </h1>
+                        <p class="text-gray-600 max-w-2xl mx-auto">
+                            发现我们平台上的优秀创作者，从人工智能到网络安全等领域，找到您感兴趣领域的专家作者。
+                        </p>
+                    </div>
+                    <!-- 栏目分类-->
+                    <div class="flex flex-wrap justify-center items-center gap-3 mb-2">
+                        <a class="{{ 'bg-primary/10 text-primary' if not category else 'bg-gray-100 hover:bg-gray-200 text-gray-700' }} px-4 py-2 rounded-full text-sm font-medium filter-tag" href="/authors">
+                            全部栏目
+                        </a>
+                        {% for categorie in categories %}
+                        <a class="{{ 'bg-primary/10 text-primary' if category and category.id == categorie.id else 'bg-gray-100 hover:bg-gray-200 text-gray-700' }} px-4 py-2 rounded-full text-sm font-medium filter-tag flex items-center" href="/authors?category_id={{ categorie.id }}">
+                            {{ categorie.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- 左侧热门推荐 -->
+                <div class="lg:col-span-3 order-2 lg:order-1">
+                    <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
+                        <h2 class="text-xl font-bold mb-6 flex items-center">
+                            <i class="fas fa-fire text-red-500 mr-2"> </i>热门推荐
+                        </h2>
+                        {% if hot_articles %}
+                        <div class="space-y-6">
+                            {% for hot_article in hot_articles %}
+                            <div class="flex gap-3 group">
+                                <img class="w-20 h-20 object-cover rounded-lg flex-shrink-0 group-hover:scale-105 transition-transform" src="/{{ hot_article.thumbnail_url }}" alt="{{ hot_article.title }}"/>
+                                <div>
+                                    <h3 class="font-medium hover:text-primary transition-colors mb-1 line-clamp-2">
+                                        <a class="article-link" href="/articles/{{ hot_article.id }}">
+                                            {{ hot_article.title }}
+                                        </a>
+                                    </h3>
+                                    <p class="text-xs text-gray-500">{{ hot_article.author.name }} · {{ (hot_article.pageviews / 1000) | round(1) }}k阅读</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- 中部作者列表 -->
+                <div class="lg:col-span-6 order-1 lg:order-2">
+                    <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold flex items-center">
+                                <i class="fas fa-users text-primary mr-2"> </i>推荐作者
+                            </h2>
+                            <span class="text-gray-500">共<strong> {{ total_authors }} </strong>位作者
+                            </span>
+                        </div>
+                        <div class="space-y-6">
+                            {% for author in authors %}
+                            <!-- 作者 -->
+                            <div class="flex flex-col md:flex-row gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors">
+                                <div class="flex-shrink-0 mx-auto">
+                                    <div class="relative">
+                                        <img class="w-20 h-20 rounded-full object-cover border-2 border-white shadow" src="/{{ author.avatar_url }}" alt="{{ author.name }}"/>
+                                        <div class="absolute -bottom-1 -right-1 bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm text-xs">
+                                            <i class="fas fa-check"> </i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex-grow text-center">
+                                    <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
+                                        <div class="mx-auto md:mx-0 md:text-left text-center">
+                                            <h3 class="text-lg font-bold mb-1 hover:text-primary transition-colors inline-block">
+                                                <a href="/authors/{{ author.id }}"> {{ author.name }} </a>
+                                            </h3>
+                                            <p class="text-primary font-medium text-sm">
+                                                {{ author.profession }}
+                                            </p>
+                                        </div>
+                                        <a class="mt-2 md:mt-0 bg-primary/10 hover:bg-primary/20 text-primary px-4 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center mx-auto md:mx-0 w-fit" href="/authors/{{ author.id }}">
+                                            <i class="fas fa-eye mr-1.5"> </i>查看
+                                        </a>
+                                    </div>
+                                    <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+                                        {{ author.description }}
+                                    </p>
+                                    <div class="flex justify-between items-center text-sm border-t border-gray-100 pt-3">
+                                        <span class="bg-{{ author.category.color }}/10 text-{{ author.category.color }} px-2.5 py-1 rounded-full text-xs font-medium author-domain">
+                                            {{ author.category.name }}
+                                        </span>
+                                        <div class="flex text-gray-500">
+                                            <div class="flex items-center mr-6">
+                                                <i class="fas fa-file-alt mr-1.5"> </i>{{ author.articles|length }}篇
+                                            </div>
+                                            <div class="flex items-center">
+                                                <i class="fas fa-eye mr-1.5"> </i>{{ (author.total_pageviews / 1000)|round(1) }}k
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <!-- 分页 -->
+                            <div class="mt-10 flex justify-center">
+                                <nav class="flex items-center space-x-1">
+                                    {% if page > 1 %}
+                                    <a href="/authors?{% if category.id %}category_id={{ category.id }}&{% endif %}page={{ page - 1 }}&per_page={{ per_page }}" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50">
+                                        <i class="fas fa-chevron-left text-sm"> </i>
+                                    </a>
+                                    {% endif %}
+                                    {# 智能分页逻辑 #}
+                                    {% set max_visible_pages = 5 %}
+                                    {% set half_window = 2 %}
+                                    {% set start_page = [1, page - half_window]|max %}
+                                    {% set end_page = [total_pages, page + half_window]|min %}
+                                    {# 调整起始页码以确保显示足够的页码 #}
+                                    {% if end_page - start_page + 1 < max_visible_pages %}
+                                        {% if start_page == 1 %}
+                                            {% set end_page = [total_pages, max_visible_pages]|min %}
+                                        {% else %}
+                                            {% set start_page = [1, end_page - max_visible_pages + 1]|max %}
+                                        {% endif %}
+                                    {% endif %}
+                                    {# 显示第一页和省略号 #}
+                                    {% if start_page > 1 %}
+                                    <a href="/authors?{% if category.id %}category_id={{ category.id }}&{% endif %}page=1&per_page={{ per_page }}" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50">1</a>
+                                        {% if start_page > 2 %}
+                                    <span class="w-10 h-10 flex items-center justify-center text-gray-500">...</span>
+                                        {% endif %}
+                                    {% endif %}
+                                    {# 显示当前页附近的页码 #}
+                                    {% for p in range(start_page, end_page + 1) %}
+                                        {% if p == page %}
+                                    <span class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white">{{ p }}</span>
+                                        {% else %}
+                                    <a href="/authors?{% if category.id %}category_id={{ category.id }}&{% endif %}page={{ p }}&per_page={{ per_page }}" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50">{{ p }}</a>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {# 显示最后一页和省略号 #}
+                                    {% if end_page < total_pages %}
+                                        {% if end_page < total_pages - 1 %}
+                                    <span class="w-10 h-10 flex items-center justify-center text-gray-500">...</span>
+                                        {% endif %}
+                                    <a href="/authors?{% if category.id %}category_id={{ category.id }}&{% endif %}page={{ total_pages }}&per_page={{ per_page }}" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50">{{ total_pages }}</a>
+                                    {% endif %}
+                                    {% if page < total_pages %}
+                                    <a href="/authors?{% if category.id %}category_id={{ category.id }}&{% endif %}page={{ page + 1 }}&per_page={{ per_page }}" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50">
+                                        <i class="fas fa-chevron-right text-sm"> </i>
+                                    </a>
+                                    {% endif %}
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 右侧热门标签 -->
+                <div class="lg:col-span-3 order-3">
+                    <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
+                        {% if hot_tags %}
+                        <h2 class="text-xl font-bold mb-6 flex items-center">
+                            <i class="fas fa-tags text-primary mr-2"> </i>热门标签
+                        </h2>
+                        <div class="flex flex-wrap gap-2 mb-8">
+                            {% for hot_tag in hot_tags %}
+                            {% if loop.index == 1 %}
+                            <a class="bg-primary/10 text-primary px-3 py-2 rounded-lg text-sm font-medium hover:bg-primary/20 transition-colors" href="/tags/{{ hot_tag }}">{{ hot_tag }}</a>
+                            {% elif loop.index == 2 %}
+                            <a class="bg-secondary/10 text-secondary px-3 py-2 rounded-lg text-sm font-medium hover:bg-secondary/20 transition-colors" href="/tags/{{ hot_tag }}">{{ hot_tag }}</a>
+                            {% else %}
+                            <a class="bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors" href="/tags/{{ hot_tag }}">{{ hot_tag }}</a>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <div class="bg-gray-50 p-5 rounded-lg mb-8">
+                            <h3 class="font-bold mb-4 flex items-center">
+                                <i class="fas fa-chart-pie text-secondary mr-2"> </i>领域分布
+                            </h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-gray-600"> 人工智能 </span>
+                                        <span class="font-medium"> 32% </span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-gray-900 h-2 rounded-full" style="width: 32%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-gray-600"> 跨境电商 </span>
+                                        <span class="font-medium"> 28% </span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-orange-500 h-2 rounded-full" style="width: 28%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-gray-600"> 开源社区 </span>
+                                        <span class="font-medium"> 19% </span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-purple-500 h-2 rounded-full" style="width: 19%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-gray-600"> 科学上网 </span>
+                                        <span class="font-medium"> 21% </span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: 21%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 p-5 rounded-lg mb-8">
+                            <h3 class="font-bold mb-4 flex items-center">
+                                <i class="fas fa-lightbulb mr-2"> </i>成为作者
+                            </h3>
+                            <p class="text-sm text-gray-600 mb-4">
+                                分享您的专业知识，获得更多曝光和影响力，加入我们的作者社区
+                            </p>
+                            <button class="block w-full text-center bg-primary hover:bg-primary/90 text-white py-2 rounded-lg font-medium transition-colors" id="applyBtn">
+                                申请成为作者
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+  </div>
+  <!-- 消息框 -->
+  <div id="messageBox" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-xl shadow-2xl p-6 max-w-sm w-full slide-down">
+        <div class="flex justify-center mb-4">
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+        </div>
+        <h2 class="text-xl font-bold text-gray-800 text-center mb-2">申请成为作者</h2>
+        <p class="text-gray-600 text-center mb-6">请您订阅我们，获取招募计划。</p>
+        <button id="closeBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-medium transition-colors duration-300">
+            确定
+        </button>
+    </div>
+  </div>
+  <!-- 页脚 --> 
+  {% include "footer.html" %}
+  <!-- 返回顶部按钮 -->
+  <button
+    class="fixed bottom-6 right-6 bg-primary text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:bg-primary/90"
+    id="back-to-top"
+  >
+   <i class="fas fa-chevron-up"> </i>
+  </button>
+  <script src="/static/theme/js/base.js"></script>
+  <script src="/static/theme/js/author.js"></script>
+{% endblock %}

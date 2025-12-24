@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% block content %}
+  <!-- 主要内容区 -->
+  <section class="pt-24 md:pt-28 pb-16 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="w-full">
+            <!-- 分类标签展示 -->
+            <div class="mb-12 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {% for category in categories %}
+                <div class="bg-gray-50 p-4 rounded-lg">
+                <h1 class="font-bold text-lg mb-3 text-dark flex items-center">
+                    <i class="{{ category.icon }} mr-2 text-{{ category.color }}"> </i>
+                    {{ category.name }}
+                </h1>
+                <div class="flex flex-wrap gap-2">
+                    {% for template_tag in category.template_tags %}
+                    <a class="{{ 'bg-primary text-white' if tag == template_tag else 'bg-gray-100 hover:bg-primary hover:text-white text-gray-700' }} px-3 py-1 rounded-full text-sm transition-colors" href="/tags/{{ template_tag }}?order_by={{ order_by }}">
+                    {{ template_tag }}
+                    </a>
+                    {% endfor %}
+                </div>
+                </div>
+                {% endfor %}
+            </div>
+            </div>
+            <!-- 面包屑导航 -->
+            <div class="flex flex-wrap justify-between items-center mb-10">
+                <div class="text-gray-600 flex items-center space-x-2">
+                    <a class="hover:text-primary transition-colors" href="/">首页</a>
+                    <i class="fas fa-chevron-right text-xs text-gray-400"> </i>
+                    <a class="hover:text-primary transition-colors" href="/tags/所有标签">所有标签</a>
+                </div>
+                <div class="flex items-center bg-gray-50 p-2 rounded-lg">
+                    <span class="text-gray-500 mr-3"> 排序: </span>
+                    <select class="bg-transparent border-none outline-none text-gray-700 pr-8 appearance-none" onchange="changeOrderBy(this.value)">
+                        <option value="0" {% if order_by == 0 %}selected{% endif %}>最新发布</option>
+                        <option value="1" {% if order_by == 1 %}selected{% endif %}>阅读最多</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- 左侧热门推荐 -->
+            <div class="col-span-1 lg:col-span-3 order-2 lg:order-1">
+                <div class="sticky top-24 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <h3 class="text-xl font-bold text-dark mb-6 flex items-center">
+                    <i class="fas fa-fire text-red-500 mr-2"> </i>热门推荐
+                </h3>
+                <div class="space-y-4">
+                    {% for hot_article in hot_articles %}
+                    <a class="flex items-start space-x-3 group" href="/articles/{{ hot_article.id }}">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-sm font-medium">
+                        {{ loop.index }}
+                    </span>
+                    <span class="text-gray-700 group-hover:text-primary transition-colors">
+                        {{ hot_article.title }}
+                    </span>
+                    </a>
+                    {% endfor %}
+                </div>
+                </div>
+            </div>
+            <!-- 中间文章列表 -->
+            <div class="col-span-1 lg:col-span-6 order-1 lg:order-2 space-y-8">
+                {% for article in articles %}
+                <!-- 文章 -->
+                <article class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow card-hover border border-gray-100">
+                <div class="md:flex">
+                    <div class="md:w-1/4">
+                    <img
+                        alt="{{ article.title }}"
+                        class="w-full h-48 md:h-full object-cover"
+                        src="/{{ article.thumbnail_url }}"
+                    />
+                    </div>
+                    <div class="p-6 md:w-3/4 flex flex-col">
+                    <div class="flex items-center text-sm text-gray-500 mb-2 flex-wrap gap-2">
+                        <span class="bg-{{ article.category.color }}/10 text-{{ article.category.color }} px-2 py-1 rounded-full text-xs font-medium">
+                        {{ article.category.name }}
+                        </span>
+                        <span> {{ article.published_at.strftime('%Y-%m-%d') }} </span>
+                        <span>
+                        <i class="far fa-clock mr-1"> </i>
+                        {{ article.read_time }}
+                        </span>
+                        <span>
+                        <i class="far fa-eye mr-1"> </i>
+                        {{ (article.pageviews / 1000) | round(1) }}k
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 hover:text-primary transition-colors">
+                        <a class="article-link" href="/articles/{{ article.id }}">
+                        {{ article.title }}
+                        </a>
+                    </h3>
+                    <p class="text-gray-600 mb-4 flex-grow">
+                        {{ article.subtitle }}
+                    </p>
+                    <div class="flex items-center justify-between mt-auto">
+                        <div class='flex items-center'>
+                            <img src="/{{ article.author.avatar_url }}" alt="{{ article.author.name }}" class='w-10 h-10 rounded-full mr-3'/>
+                            <div >
+                                <div class='text-sm font-medium text-gray-800'>{{ article.author.name }}</div>
+                                <div class='text-xs text-gray-500'>{{ article.author.profession }}</div>
+                            </div>
+                        </div>
+                        <a class="text-primary hover:text-primary/80 font-medium text-sm article-link" href="/articles/{{ article.id }}">
+                        阅读更多
+                        <i class="fas fa-arrow-right ml-1"> </i>
+                        </a>
+                    </div>
+                    </div>
+                </div>
+                </article>
+                {% endfor %}
+            </div>
+            <!-- 右侧热门标签 -->
+            <div class="col-span-1 lg:col-span-3 order-3">
+                <div class="sticky top-24 bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <h3 class="text-xl font-bold text-dark mb-6 flex items-center">
+                    <i class="fas fa-tags text-primary mr-2"> </i>热门标签
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    {% for hot_tag in hot_tags %}
+                    <a class="{{ 'bg-primary text-white' if tag == hot_tag else 'bg-gray-100 hover:bg-primary hover:text-white text-gray-700' }} px-3 py-1.5 rounded-full text-sm transition-colors" href="/tags/{{ hot_tag }}?order_by={{ order_by }}">
+                    {{ hot_tag }}
+                    </a>
+                    {% endfor %}
+                </div>
+                </div>
+            </div>
+            </div>
+            {% if total_pages > 0 %}
+            <!-- 分页 -->
+            <div class="mt-12 flex justify-center">
+                <nav class="inline-flex rounded-md shadow">
+                    {% if page > 1 %}
+                    <a class="px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 rounded-l-lg" href="/tags/{{ tag }}?order_by={{ order_by }}&page={{ page - 1 }}&per_page={{ per_page }}">
+                        <i class="fas fa-chevron-left mr-1"> </i>上一页
+                    </a>
+                    {% endif %}
+                    {# 智能分页逻辑 #}
+                    {% set max_visible_pages = 5 %}
+                    {% set half_window = 2 %}
+                    {% set start_page = [1, page - half_window]|max %}
+                    {% set end_page = [total_pages, page + half_window]|min %}
+                    {# 调整起始页码以确保显示足够的页码 #}
+                    {% if end_page - start_page + 1 < max_visible_pages %}
+                        {% if start_page == 1 %}
+                            {% set end_page = [total_pages, max_visible_pages]|min %}
+                        {% else %}
+                            {% set start_page = [1, end_page - max_visible_pages + 1]|max %}
+                        {% endif %}
+                    {% endif %}
+                    {# 显示第一页和省略号 #}
+                    {% if start_page > 1 %}
+                    <a class="px-4 py-2 border-t border-b border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50" href="/tags/{{ tag }}?order_by={{ order_by }}&page=1&per_page={{ per_page }}">1</a>
+                        {% if start_page > 2 %}
+                    <span class="px-4 py-2 border-t border-b border-gray-300 bg-white text-sm font-medium text-gray-700">...</span>
+                        {% endif %}
+                    {% endif %}
+                    {# 显示当前页附近的页码 #}
+                    {% for p in range(start_page, end_page + 1) %}
+                        {% if p == page %}
+                    <span class="px-4 py-2 border-t border-b border-gray-300 bg-primary text-sm font-medium text-white">{{ p }}</span>
+                        {% else %}
+                    <a class="px-4 py-2 border-t border-b border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50" href="/tags/{{ tag }}?order_by={{ order_by }}&page={{ p }}&per_page={{ per_page }}">{{ p }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    {# 显示最后一页和省略号 #}
+                    {% if end_page < total_pages %}
+                        {% if end_page < total_pages - 1 %}
+                    <span class="px-4 py-2 border-t border-b border-gray-300 bg-white text-sm font-medium text-gray-700">...</span>
+                        {% endif %}
+                    <a class="px-4 py-2 border-t border-b border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50" href="/tags/{{ tag }}?order_by={{ order_by }}&page={{ total_pages }}&per_page={{ per_page }}">{{ total_pages }}</a>
+                    {% endif %}
+                    {% if page < total_pages %}
+                    <a class="px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 rounded-r-lg" href="/tags/{{ tag }}?order_by={{ order_by }}&page={{ page + 1 }}&per_page={{ per_page }}">
+                        下一页<i class="fas fa-chevron-right ml-1"> </i>
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+  </section>
+  <!-- 页脚 --> 
+  {% include "footer.html" %}
+  <!-- 返回顶部按钮 -->
+  <button
+    class="fixed bottom-6 right-6 bg-primary text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:bg-primary/90"
+    id="back-to-top"
+  >
+   <i class="fas fa-chevron-up"> </i>
+  </button>
+  <script src="/static/theme/js/base.js"></script>
+  <script src="/static/theme/js/tag.js"></script>
+  <script>
+    // 设置排序规则
+    function changeOrderBy(value) {
+        window.location.href = `/tags/{{ tag }}?order_by=${value}`;
+    }
+  </script>
+{% endblock %}

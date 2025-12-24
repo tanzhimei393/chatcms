@@ -1,0 +1,145 @@
+/* Quill编辑器字体样式 */
+.ql-font-simsun { font-family: "SimSun", "宋体"; }
+.ql-font-simhei { font-family: "SimHei", "黑体"; }
+.ql-font-microsoft-yahei { font-family: "Microsoft YaHei", "微软雅黑"; }
+.ql-font-kaiti { font-family: "KaiTi", "楷体"; }
+.ql-font-fang-song { font-family: "FangSong", "仿宋"; }
+.ql-font-arial { font-family: Arial, sans-serif; }
+.ql-font-times-new-roman { font-family: "Times New Roman", serif; }
+
+/* 文字大小选择器样式 */
+.ql-snow .ql-picker.ql-size {
+    width: 70px;  /* 菜单栏占比宽度 */
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='12px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='12px']::before {
+    content: '12px' !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='14px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='14px']::before {
+    content: '14px' !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='16px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='16px']::before {
+    content: '16px' !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='18px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='18px']::before {
+    content: '18px' !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='20px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='20px']::before {
+    content: '20px' !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='24px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='24px']::before {
+    content: '24px' !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='28px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='28px']::before {
+    content: '28px' !important;
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='32px']::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='32px']::before {
+    content: '32px' !important;
+}
+
+/* 字体选择器样式 */
+.ql-snow .ql-picker.ql-font {
+    width: 100px;  /* 菜单栏占比宽度 */
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value='simsun']::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value='simsun']::before {
+    content: '宋体' !important;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value='simhei']::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value='simhei']::before {
+    content: '黑体' !important;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value='microsoft-yahei']::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value='microsoft-yahei']::before {
+    content: '微软雅黑' !important;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value='kaiti']::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value='kaiti']::before {
+    content: '楷体' !important;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value='fang-song']::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value='fang-song']::before {
+    content: '仿宋' !important;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value='arial']::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value='arial']::before {
+    content: 'Arial' !important;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value='times-new-roman']::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value='times-new-roman']::before {
+    content: '新罗马体' !important;
+}
+
+/* Quill字号样式 */
+.ql-size-12px { font-size: 12px !important; }
+.ql-size-14px { font-size: 14px !important; }
+.ql-size-16px { font-size: 16px !important; }
+.ql-size-18px { font-size: 18px !important; }
+.ql-size-20px { font-size: 20px !important; }
+.ql-size-24px { font-size: 24px !important; }
+.ql-size-28px { font-size: 28px !important; }
+.ql-size-32px { font-size: 32px !important; }
+
+/* Quill隔离Tailwind层 */
+.render-content * {
+  all: revert;
+}
+
+/* 只对文章内容中的特定标题元素应用锚点偏移，避免影响Quill编辑器 */
+.render-content h1[id],
+.render-content h2[id],
+.render-content h3[id],
+.render-content h4[id],
+.render-content h5[id],
+.render-content h6[id] {
+  scroll-margin-top: 80px;
+}
+
+.render-content h1[id]::before,
+.render-content h2[id]::before,
+.render-content h3[id]::before,
+.render-content h4[id]::before,
+.render-content h5[id]::before,
+.render-content h6[id]::before {
+  content: "";
+  display: block;
+  height: 80px;
+  margin-top: -80px;
+  visibility: hidden;
+}
+
+/* 引用块样式 */
+.render-content blockquote {
+  margin: 0;
+  padding: 0;
+  counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+}
+
+.render-content blockquote {
+  border-left: 4px solid #ccc;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  padding-left: 16px;
+}

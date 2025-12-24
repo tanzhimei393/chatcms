@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block content %}
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">订阅管理</h2>
+                <p class="text-gray-600">共 {{ total_subscribes }} 个订阅</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                <table class="min-w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left">ID</th>
+                            <th class="px-6 py-3 text-left">IP地址</th>
+                            <th class="px-6 py-3 text-left">浏览器指纹</th>
+                            <th class="px-6 py-3 text-left">邮箱</th>
+                            <th class="px-6 py-3 text-left">订阅时间</th>
+                            <th class="px-6 py-3 text-left">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        {% for subscribe in subscribes %}
+                        <tr>
+                            <td class="px-6 py-4">{{ subscribe.id }}</td>
+                            <td class="px-6 py-4">{{ subscribe.ip_address }}</td>
+                            <td class="px-6 py-4">{{ subscribe.browser_fingerprint }}</td>
+                            <td class="px-6 py-4">{{ subscribe.email }}</td>
+                            <td class="px-6 py-4">{{ subscribe.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                            <td class="px-6 py-4">
+                                <form method="post" action="/kofkyo/subscribes/{{ subscribe.id }}/delete" class="inline" 
+                                    onsubmit="return confirm('确定要删除这个订阅吗？')">
+                                    <button type="submit" class="text-red-600 hover:text-red-800">删除</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分页控件 -->
+            {% if total_pages > 0 %}
+            <div class="flex justify-center items-center space-x-2">
+                {% if page > 1 %}
+                <a href="/kofkyo/subscribes?page={{ page - 1 }}&per_page={{ per_page }}" 
+                class="px-3 py-1 border rounded-md hover:bg-gray-100">上一页</a>
+                {% endif %}
+                {# 智能分页逻辑 #}
+                {% set max_visible_pages = 5 %}
+                {% set half_window = 2 %}
+                {% set start_page = [1, page - half_window]|max %}
+                {% set end_page = [total_pages, page + half_window]|min %}
+                {# 调整起始页码以确保显示足够的页码 #}
+                {% if end_page - start_page + 1 < max_visible_pages %}
+                    {% if start_page == 1 %}
+                        {% set end_page = [total_pages, max_visible_pages]|min %}
+                    {% else %}
+                        {% set start_page = [1, end_page - max_visible_pages + 1]|max %}
+                    {% endif %}
+                {% endif %}
+                {# 显示第一页和省略号 #}
+                {% if start_page > 1 %}
+                    <a href="/kofkyo/subscribes?page=1&per_page={{ per_page }}" 
+                    class="px-3 py-1 border rounded-md hover:bg-gray-100">1</a>
+                    {% if start_page > 2 %}
+                    <span class="px-2">...</span>
+                    {% endif %}
+                {% endif %}
+                {# 显示当前页附近的页码 #}
+                {% for p in range(start_page, end_page + 1) %}
+                    {% if p == page %}
+                    <span class="px-3 py-1 bg-blue-600 text-white rounded-md">{{ p }}</span>
+                    {% else %}
+                    <a href="/kofkyo/subscribes?page={{ p }}&per_page={{ per_page }}" 
+                    class="px-3 py-1 border rounded-md hover:bg-gray-100">{{ p }}</a>
+                    {% endif %}
+                {% endfor %}
+                {# 显示最后一页和省略号 #}
+                {% if end_page < total_pages %}
+                    {% if end_page < total_pages - 1 %}
+                    <span class="px-2">...</span>
+                    {% endif %}
+                    <a href="/kofkyo/subscribes?page={{ total_pages }}&per_page={{ per_page }}" 
+                    class="px-3 py-1 border rounded-md hover:bg-gray-100">{{ total_pages }}</a>
+                {% endif %}
+                {% if page < total_pages %}
+                <a href="/kofkyo/subscribes?page={{ page + 1 }}&per_page={{ per_page }}" 
+                class="px-3 py-1 border rounded-md hover:bg-gray-100">下一页</a>
+                {% endif %}
+            </div>
+            <div class="flex justify-center items-center mt-4 text-sm text-gray-600">
+                <span>每页显示：</span>
+                <select onchange="changePerPage(this.value)" class="ml-2 border rounded px-2 py-1">
+                    <option value="10" {% if per_page == 10 %}selected{% endif %}>10</option>
+                    <option value="20" {% if per_page == 20 %}selected{% endif %}>20</option>
+                    <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+                    <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+                </select>
+                <span class="ml-4">第 {{ page }} 页 / 共 {{ total_pages }} 页</span>
+            </div>
+            {% endif %}
+            <script>
+            function changePerPage(value) {
+                window.location.href = `/kofkyo/subscribes?page=1&per_page=${value}`;
+            }
+            </script>
+{% endblock %}
