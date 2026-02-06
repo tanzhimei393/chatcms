@@ -126,4 +126,5 @@ If you want, I can add a ready-to-use `Dockerfile`, `docker-compose.yml`, a `Pro
 If you'd like to support development, scan the QR code below:
 
 
-[![Donate QR](static/theme/images/donate_qr.png)](static/theme/images/donate_qr.png)
+TRC20-USDT:TKU9maWEjX34TGwCiPpDqmmty69ADxqAym
+
