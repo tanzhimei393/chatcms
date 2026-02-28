@@ -123,8 +123,9 @@ If you want, I can add a ready-to-use `Dockerfile`, `docker-compose.yml`, a `Pro
 
 ## Support / Donate
 
-If you'd like to support development, scan the QR code below:
+If you'd like to support development, TRC20-USDT:
 
 
-TRC20-USDT:TKU9maWEjX34TGwCiPpDqmmty69ADxqAym
+TKU9maWEjX34TGwCiPpDqmmty69ADxqAym
+
 
